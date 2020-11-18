@@ -1,0 +1,58 @@
+﻿@page "/"
+@using System.Net.Http
+@using SaleWeb.Models
+@using Newtonsoft.Json
+@inject HttpClient Http
+
+<h1>Hello, world!</h1>
+<button @onclick="@GetProduct" >Get products</button>
+@if (products == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Desc</th>
+                <th>Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.dateActivated.ToShortDateString()</td>
+                    <td>@product.name</td>
+                    <td>@product.description</td>
+                    <td>@product.id</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Product> products;
+
+    private async void GetProduct()
+    {
+
+        string url = "https://localhost:44363/api/Product/";
+
+        using (HttpClient httpClient = new HttpClient())
+        {
+            HttpResponseMessage resposta = await httpClient.GetAsync(url);
+            string json = await resposta.Content.ReadAsStringAsync();
+            Product product = JsonConvert.DeserializeObject<Product>(json);
+            products.Add(product);
+        }
+    }
+
+
+}
+
+<SurveyPrompt Title="How is Blazor working for you?" />

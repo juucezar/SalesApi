@@ -12,11 +12,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using SaleAPI.Models;
+using Microsoft.VisualBasic;
 
 namespace SaleAPI
 {
     public class Startup
     {
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,7 +34,14 @@ namespace SaleAPI
                 options.UseSqlServer(Configuration.GetConnectionString("UserDatabase"), opt => opt.EnableRetryOnFailure()));
             services.AddDbContext<ClientContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("UserDatabase"), opt => opt.EnableRetryOnFailure()));
-
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                     builder =>
+                     {
+                         builder.WithOrigins("https://localhost");
+                     });
+            });
             services.AddControllers();
 
         }
@@ -50,6 +59,8 @@ namespace SaleAPI
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints =>
             {
