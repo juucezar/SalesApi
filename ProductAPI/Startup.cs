@@ -11,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using ProductAPI.Models;
+using SaleAPI.Models;
 
-namespace ProductAPI
+namespace SaleAPI
 {
     public class Startup
     {
@@ -29,6 +29,8 @@ namespace ProductAPI
         {
            
             services.AddDbContext<ProductContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("UserDatabase"), opt => opt.EnableRetryOnFailure()));
+            services.AddDbContext<ClientContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("UserDatabase"), opt => opt.EnableRetryOnFailure()));
 
             services.AddControllers();
